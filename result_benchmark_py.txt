@@ -1,0 +1,9 @@
+benchmark_csv                  0.018726
+# SKIP benchmark_excellent (No module named 'StringIO')
+# SKIP benchmark_ooxml (ooxml is FUBAR)
+benchmark_openpyxl             0.809650
+benchmark_openpyxl_rows        1.078381
+benchmark_pyexcelerate         0.349354
+benchmark_xlsxcessive          0.608592
+benchmark_xlsxwriter           0.429694
+benchmark_xlwt                 0.443741
