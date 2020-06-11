@@ -3,7 +3,7 @@ import argparse
 from functools import wraps
 import re
 import timeit
-from itertools import cycle, izip
+from itertools import cycle
 
 ROWS = 1000
 COLUMNS = 100
@@ -40,8 +40,8 @@ def benchmark_xlwt():
     workbook = xlwt.Workbook()
     sheet = workbook.add_sheet('A Test Sheet')
 
-    for row, value in izip(xrange(ROWS), VALUES):
-        for column in xrange(COLUMNS):
+    for row, value in zip(range(ROWS), VALUES):
+        for column in range(COLUMNS):
             sheet.write(row, column, value)
 
     workbook.save('benchmark_xlwt.xlsx')
@@ -53,8 +53,8 @@ def benchmark_xlsxcessive():
     workbook = xcessive.Workbook()
     sheet = workbook.new_sheet('Sheet1')
 
-    for row, value in izip(xrange(ROWS), VALUES):
-        for column in xrange(COLUMNS):
+    for row, value in zip(range(ROWS), VALUES):
+        for column in range(COLUMNS):
             sheet.cell(coords=(row, column), value=value)
 
     xcessive.save(workbook, 'benchmark_xlsxcessive.xlsx')
@@ -67,8 +67,8 @@ def benchmark_ooxml():
     workbook = ooxmls.Spreadsheet()
     sheet = workbook.sheet(1)
 
-    for row, value in izip(xrange(ROWS), VALUES):
-        for column in xrange(COLUMNS):
+    for row, value in zip(range(ROWS), VALUES):
+        for column in range(COLUMNS):
             sheet.set_cell(column, row, value)
 
     workbook.save('benchmark_ooxml.xlsx')
@@ -83,12 +83,12 @@ def benchmark_openpyxl_rows():
 
     import openpyxl
 
-    workbook = openpyxl.workbook.Workbook(optimized_write=True)
+    workbook = openpyxl.workbook.Workbook()
     sheet = workbook.create_sheet()
     sheet.title = 'Sheet1'
     # note: pyopenxl indexes rows and columns starting from 1
-    for row, value in izip(xrange(1, ROWS + 1), VALUES):
-        sheet.append([str(value) for _ in xrange(1, COLUMNS + 1)])
+    for row, value in zip(range(1, ROWS + 1), VALUES):
+        sheet.append([str(value) for _ in range(1, COLUMNS + 1)])
 
     workbook.save('benchmark_openpyxl_rows.xlsx')
 
@@ -96,17 +96,16 @@ def benchmark_openpyxl_rows():
 def benchmark_openpyxl():
     """OpenPyXL using sheet.cell().value = value"""
     import openpyxl
-    from openpyxl.cell import get_column_letter
+    from openpyxl.utils import get_column_letter
 
-    workbook = openpyxl.workbook.Workbook(optimized_write=True)
+    workbook = openpyxl.workbook.Workbook()
     sheet = workbook.create_sheet()
     sheet.title = 'Sheet1'
 
     # note: pyopenxl indexes rows and columns starting from 1
-    for row, value in izip(xrange(1, ROWS + 1), VALUES):
-        for column in xrange(1, COLUMNS + 1):
-            sheet.cell('%s%s' % (get_column_letter(column), row)).value = value
-
+    for row, value in zip(range(1, ROWS + 1), VALUES):
+        for column in range(1, COLUMNS + 1):
+            sheet.cell(row, column, value)
     workbook.save('benchmark_openpyxl.xlsx')
 
 
@@ -116,8 +115,8 @@ def benchmark_pyexcelerate():
     workbook = pyexcelerate.Workbook()
 
     data = [
-        [value for column in xrange(COLUMNS)]
-         for __, value in izip(xrange(ROWS), VALUES)
+        [value for column in range(COLUMNS)]
+         for __, value in zip(range(ROWS), VALUES)
     ]
 
     workbook.new_sheet('Test 1', data=data)
@@ -138,10 +137,10 @@ def benchmark_excellent():
     excel.write((
         OrderedDict((
             (str(column), value)
-            for column in xrange(COLUMNS)
+            for column in range(COLUMNS)
         ))
         for row, value
-        in izip(xrange(ROWS), VALUES)
+        in zip(range(ROWS), VALUES)
     ))
 
     excel.save()
@@ -152,8 +151,8 @@ def benchmark_xlsxwriter():
     workbook = xlsxwriter.Workbook('benchmark_xlsxwriter.xlsx')
     sheet = workbook.add_worksheet()
 
-    for row, value in izip(xrange(ROWS), VALUES):
-        for column in xrange(COLUMNS):
+    for row, value in zip(range(ROWS), VALUES):
+        for column in range(COLUMNS):
             sheet.write(column, row, value)
 
     workbook.close()
@@ -162,11 +161,11 @@ def benchmark_xlsxwriter():
 def benchmark_csv():
     import csv
 
-    with open('benchmark_scv.csv', 'wb') as csvfile:
+    with open('benchmark_scv.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerows([
-            [value for _ in xrange(COLUMNS)]
-            for row, value in izip(xrange(ROWS), VALUES)
+            [value for _ in range(COLUMNS)]
+            for row, value in zip(range(ROWS), VALUES)
         ])
 
 
@@ -220,7 +219,7 @@ if __name__ == "__main__":
         timer = timeit.Timer(stmt, 'gc.enable()')
         try:
             result = timer.timeit(number=args.tests)
-        except ImportError, err:
+        except ImportError as err:
             print("# SKIP {0} ({1})".format(stmt.__name__, err))
             continue
 
