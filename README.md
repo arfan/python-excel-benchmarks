@@ -60,23 +60,23 @@ even with plain data.
 ## Findings
 I run benchmarks on my machine:
 ```
-OS: Ubuntu 14.04 trusty
-Kernel: x86_64 Linux 3.12.0-5-generic
-CPU: Intel Core2 Duo CPU E8200 @ 2.667GHz
-RAM: 7723MB
+OS: Ubuntu 20.04 LTS focal
+Kernel: x86_64 Linux 5.4.0-37-generic
+CPU: Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz
+RAM: 11643MB
 ```
 
 Here are the results:
 ```
-benchmark_csv                  0.026495
-benchmark_excellent            1.784107
+benchmark_csv                  0.025808
+# SKIP benchmark_excellent (No module named 'StringIO')
 # SKIP benchmark_ooxml (ooxml is FUBAR)
-benchmark_openpyxl             2.897072
-benchmark_openpyxl_rows        7.025895
-benchmark_pyexcelerate         0.550225
-benchmark_xlsxcessive          1.430242
-benchmark_xlsxwriter           1.611668
-benchmark_xlwt                 1.275144
+benchmark_openpyxl             0.797517
+benchmark_openpyxl_rows        1.077612
+benchmark_pyexcelerate         0.351649
+benchmark_xlsxcessive          0.624214
+benchmark_xlsxwriter           0.440920
+benchmark_xlwt                 0.476784
 ```
 
 At the moment the best is `pyexcelerate` which is advertised as built with
